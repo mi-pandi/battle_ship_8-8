@@ -1,0 +1,58 @@
+public class Battleship8x8 {
+    private final long ships;
+    private long shots = 0L;
+
+    public Battleship8x8(final long ships) {
+        this.ships = ships;
+    }
+
+    public boolean shoot(String shot) {
+        int columns = shot.charAt(0) - 'A';//[0;7]
+        int rows = shot.charAt(1) - '1';//[0;7]
+        String shipsMap = Long.toBinaryString(ships);
+        while (shipsMap.length()<64){
+            shipsMap = "0" + shipsMap;
+        }
+        int index = rows * 8 + columns;
+        this.shots |= 1L << (63-index);
+
+        String shotsMap = Long.toBinaryString(shots);
+        while (shotsMap.length()<64){
+            shotsMap = "0" + shotsMap;
+        }
+//        System.out.println(shotsMap);
+        return shipsMap.charAt(index) == '1';
+    }
+
+    public String state() {
+        String shipsMap = Long.toBinaryString(ships);
+        while (shipsMap.length()<64){
+            shipsMap = "0" + shipsMap;
+        }
+        String shotsMap = Long.toBinaryString(shots);
+        while (shotsMap.length()<64){
+            shotsMap = "0" + shotsMap;
+        }
+
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            StringBuilder current = new StringBuilder();
+            for (int j = 0; j < 8; j++) {
+                int index = i * 8 + j;
+                int shotValue = shotsMap.charAt(index) - '0';
+                int shipValue = shipsMap.charAt(index) - '0';
+                if( shotValue == 0 && shipValue == 0 ){
+                    current.append('.');
+                }else if( shotValue == 0 && shipValue == 1 ){
+                    current.append('☐');
+                }else if( shotValue == 1 && shipValue == 0 ){
+                    current.append('×');
+                }else {
+                    current.append('☒');
+                }
+            }
+            result.append(current).append("\n");
+        }
+        return result.toString();
+    }
+}
